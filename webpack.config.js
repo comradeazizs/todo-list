@@ -14,7 +14,7 @@ module.exports = {
       hash: true,
       title: "To Do",
       template: "./src/template.html",
-
+      favicon: "./src/icons/favicon.ico",
       filename: "./index.html"
     })
   ],
