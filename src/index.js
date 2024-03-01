@@ -20,6 +20,9 @@ const contentWrapper = document.createElement("div");
 contentWrapper.classList.add("contentWrapper");
 app.appendChild(createTopbar())
 app.appendChild(contentWrapper);
-contentWrapper.appendChild(createNavbar(todoDial,projDial))
+contentWrapper.appendChild(createNavbar(todoDial, projDial))
+const mainColumn = document.createElement("div");
+mainColumn.classList.add("mainColumn");
+contentWrapper.appendChild(mainColumn);
 
 

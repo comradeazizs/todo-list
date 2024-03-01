@@ -12,6 +12,14 @@ body {
   margin: 0;
 }
 
+.contentWrapper {
+  display: flex;
+}
+
+.mainColumn {
+  flex: 1;
+}
+
 #topbar {
   background-color: var(--lime);
   height: 60px;
