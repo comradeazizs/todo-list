@@ -1,7 +1,7 @@
 import "./style.css";
 import calendarToday from "./icons/calendar-today.svg";
 import calendarUpcoming from "./icons/calendar-range.svg";
-import { TodoDialog, ProjectDialog, createNavbar, createTopbar } from "./dom-functions"
+import { TodoDialog, ProjectDialog, createNavbar, createTopbar, updateProjectsUl } from "./dom-functions"
 import { TodoItem, Project } from "./todo"
 
 const app = document.querySelector("#content");
@@ -25,4 +25,4 @@ const mainColumn = document.createElement("div");
 mainColumn.classList.add("mainColumn");
 contentWrapper.appendChild(mainColumn);
 
-
+updateProjectsUl();

@@ -138,9 +138,14 @@ function formSubmit(event) {
   );
 
   let project = Project.list.find(
-    (p) => p.title = document.querySelector("#project-select").value
+    (p) => p.title === document.querySelector("#project-select").value
   )
-
+  const projectSelect = document.querySelector("#project-select");
+  projectSelect.addEventListener("change", (e) => {
+    project = Project.list.find(
+      (p) => p.title === document.querySelector("#project-select").value
+    )
+  })
   try {
     project.addTodo(todo);
     console.log(project);
@@ -151,7 +156,7 @@ function formSubmit(event) {
 
   let form = document.querySelector(".form-container");
   form.reset();
-  Dialog.close();
+  TodoDialog.close();
 };
 
 
@@ -230,20 +235,36 @@ export function createNavbar(todoDialog, projectDialog) {
 
   return navbar;
 };
-
-function updateProjectsUl() {
+export function updateProjectsUl() {
   const projectsUl = document.querySelector("#projects-ul");
   while (projectsUl.firstChild) {
     projectsUl.removeChild(projectsUl.lastChild);
   }
+  const mainColumn = document.querySelector(".mainColumn");
   Project.list.forEach((project) => {
     const li = document.createElement("li");
     li.textContent = project.title;
+    li.addEventListener("click", (e) => {
+
+      while (mainColumn.firstChild) {
+        mainColumn.removeChild(mainColumn.lastChild);
+      }
+      for (let index in project.todoList) {
+        const div = document.createElement("div");
+        const title = document.createElement("h3");
+        title.textContent = project.todoList[index].title;
+        const desc = document.createElement("p");
+        desc.textContent = project.todoList[index].description;
+        div.appendChild(title);
+        div.appendChild(desc);
+        mainColumn.appendChild(div);
+      }
+    })
     projectsUl.appendChild(li);
   });
 };
 
-function updateTodoProjectsInput(){
+function updateTodoProjectsInput() {
   const projectSelect = document.querySelector("#project-select");
   while (projectSelect.firstChild) {
     projectSelect.removeChild(projectSelect.lastChild);
