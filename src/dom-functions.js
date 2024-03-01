@@ -2,7 +2,7 @@ import checkbox from "./icons/checkbox.png";
 import { Project, TodoItem } from './todo';
 
 
-export class Dialog {
+export class TodoDialog {
   static create() {
     const dialog = document.createElement("dialog");
     dialog.classList.add("dialog");
@@ -80,6 +80,52 @@ export class Dialog {
   }
 };
 
+export class ProjectDialog {
+  static create() {
+    const dialog = document.createElement("dialog");
+    dialog.classList.add("project-dialog");
+    const form = document.createElement("form");
+    form.action = "#";
+    form.classList.add("form-container");
+    const input = document.createElement("input");
+    input.setAttribute("required", "");
+    input.type = "text";
+    input.classList.add("project-title");
+    input.name = "project-title";
+    input.placeholder = "Project title";;
+    form.appendChild(input);
+
+    const submit = document.createElement("button");
+    submit.type = "submit";
+    submit.textContent = "Add project";
+    submit.classList.add("project-submit");
+    submit.addEventListener("click", (e) => {
+      e.preventDefault();
+      let projectName = document.querySelector(".project-title").value;
+      for (let i in Project.list) {
+        if (Project.list[i].title === projectName) {
+          alert("A project with the same title already exists. Please enter a different title.");
+          return
+        }
+      }
+      Project.list.push(new Project(projectName));
+      console.log(Project.list);
+      form.reset();
+      dialog.close();
+      updateProjectsUl();
+      updateTodoProjectsInput();
+    });
+    form.appendChild(submit);
+
+    dialog.appendChild(form);
+    return dialog;
+  }
+
+  static close() {
+    let dialog = document.querySelector(".project-dialog")
+    dialog.close()
+  }
+}
 
 function formSubmit(event) {
   event.preventDefault();
@@ -129,7 +175,7 @@ export function createTopbar() {
   return topbar;
 };
 
-export function createNavbar(dialog) {
+export function createNavbar(todoDialog, projectDialog) {
   const navbar = document.createElement("div");
   navbar.setAttribute("id", "navbar");
 
@@ -138,7 +184,7 @@ export function createNavbar(dialog) {
   create.classList.add("todo-create");
   create.addEventListener("click", (e) => {
     e.preventDefault();
-    dialog.showModal();
+    todoDialog.showModal();
   })
 
   navbar.appendChild(create);
@@ -156,13 +202,55 @@ export function createNavbar(dialog) {
   });
   navbar.appendChild(primaryUl);
 
-  const projectUl = document.createElement("ul");
+  const projectHeader = document.createElement("h2");
+  projectHeader.classList.add("project-header");
+  projectHeader.textContent = "Projects: ";
+  navbar.appendChild(projectHeader);
+
+
+  const projectsUl = document.createElement("ul");
+  projectsUl.id = "projects-ul";
+  navbar.appendChild(projectsUl);
+
   Project.list.forEach((project) => {
     const li = document.createElement("li");
     li.textContent = project.title;
-    projectUl.appendChild(li);
+    projectsUl.appendChild(li);
   });
-  navbar.appendChild(projectUl);
+
+  const createProject = document.createElement("div");
+  createProject.classList.add("create-project");
+  createProject.textContent = "Create new project";
+  createProject.addEventListener("click", (e) => {
+    e.preventDefault();
+    projectDialog.showModal();
+  });
+
+  navbar.appendChild(createProject);
 
   return navbar;
 };
+
+function updateProjectsUl() {
+  const projectsUl = document.querySelector("#projects-ul");
+  while (projectsUl.firstChild) {
+    projectsUl.removeChild(projectsUl.lastChild);
+  }
+  Project.list.forEach((project) => {
+    const li = document.createElement("li");
+    li.textContent = project.title;
+    projectsUl.appendChild(li);
+  });
+};
+
+function updateTodoProjectsInput(){
+  const projectSelect = document.querySelector("#project-select");
+  while (projectSelect.firstChild) {
+    projectSelect.removeChild(projectSelect.lastChild);
+  }
+  Project.list.forEach((project) => {
+    const option = document.createElement("option");
+    option.textContent = project.title;
+    projectSelect.appendChild(option);
+  });
+}
