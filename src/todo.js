@@ -6,26 +6,33 @@ export class TodoItem {
     this.priority = priority;
     this.completed = false;
   }
+
+  addTodo(projectTitle) {
+    const projects = JSON.parse(localStorage.getItem("projects"));
+    let index = projects.findIndex(project => project.title === projectTitle);
+    let todoIndex = projects[index].todoList.findIndex(todo => todo.title === this.title);
+    if (todoIndex === -1) {
+      projects[index].todoList.push(this);
+      localStorage.setItem("projects", JSON.stringify(projects));
+    } else {
+      throw new Error("Todo with that title already exists in this Project")
+    }
+  }
 }
 
 export class Project {
-  static list = []
-
   constructor(title) {
     this.title = title;
     this.todoList = [];
   }
 
-  pushToList() {
-    Project.list.push(this)
-  }
-
-  addTodo(todoItem) {
-    let index = this.todoList.findIndex(item => item.title === todoItem.title);
-    if (index === -1) {
-      this.todoList.push(todoItem);
+  pushToStorage() {
+    const projects = JSON.parse(localStorage.getItem("projects"));
+    if (!projects) {
+      localStorage.setItem("projects", JSON.stringify([this]));
     } else {
-      throw new Error("Todo with that title already exists in this Project")
+      projects.push(this);
+      localStorage.setItem("projects", JSON.stringify(projects))
     }
   }
 

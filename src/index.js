@@ -6,10 +6,13 @@ import { TodoItem, Project } from "./todo"
 
 const app = document.querySelector("#content");
 
-let date = new Date(2024, 2, 19);
-const shopping = new Project("Shopping");
-shopping.pushToList();
-shopping.addTodo(new TodoItem("tomatoes", "buy 0.5 kg of tomatoes", date, "high"));
+const projects = JSON.parse(localStorage.getItem("projects"));
+if (!projects) {
+  const shopping = new Project("Shopping");
+  shopping.pushToStorage();
+  (new TodoItem("tomatoes", "buy 0.5 kg of tomatoes", new Date(2024, 2, 19), "high").addTodo(shopping.title));
+}
+
 let todoDial = TodoDialog.create()
 let projDial = ProjectDialog.create()
 

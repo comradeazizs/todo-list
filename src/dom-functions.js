@@ -48,7 +48,8 @@ export class TodoDialog {
 
       let options = ["low", "medium", "high"];
       if (field === "project") {
-        options = Project.list.map(project => project.title);
+        let projects = JSON.parse(localStorage.getItem("projects"));
+        options = projects.map(project => project.title);
       };
       options.forEach(optionValue => {
         let option = document.createElement("option");
@@ -102,14 +103,14 @@ export class ProjectDialog {
     submit.addEventListener("click", (e) => {
       e.preventDefault();
       let projectName = document.querySelector(".project-title").value;
-      for (let i in Project.list) {
-        if (Project.list[i].title === projectName) {
+      let projects = JSON.parse(localStorage.getItem("projects"));
+      for (let i in projects) {
+        if (projects[i].title === projectName) {
           alert("A project with the same title already exists. Please enter a different title.");
           return
         }
       }
-      Project.list.push(new Project(projectName));
-      console.log(Project.list);
+      (new Project(projectName)).pushToStorage();
       form.reset();
       dialog.close();
       updateProjectsUl();
@@ -137,18 +138,12 @@ function formSubmit(event) {
     document.querySelector("#priority-select").value,
   );
 
-  let project = Project.list.find(
-    (p) => p.title === document.querySelector("#project-select").value
-  )
-  const projectSelect = document.querySelector("#project-select");
-  projectSelect.addEventListener("change", (e) => {
-    project = Project.list.find(
-      (p) => p.title === document.querySelector("#project-select").value
-    )
-  })
+  let projectTitle = document.getElementById("project-select").value;
+  document.getElementById("project-select").addEventListener("change", (e) => {
+    projectTitle = document.getElementById("project-select").value;
+  });
   try {
-    project.addTodo(todo);
-    console.log(project);
+    todo.addTodo(projectTitle);
   } catch (error) { // TODO improve
     alert("A todo with the same title already exists in this project. Please enter a different title.");
     return
@@ -162,7 +157,6 @@ function formSubmit(event) {
 
 /**
  * Creates a top bar element for a to-do list.
- * @param {string} checkbox - The URL or path to the checkbox image.
  * @returns {HTMLElement} The top bar element containing an icon and a title.
  */
 export function createTopbar() {
@@ -215,13 +209,17 @@ export function createNavbar(todoDialog, projectDialog) {
 
   const projectsUl = document.createElement("ul");
   projectsUl.id = "projects-ul";
+  projectsUl.addEventListener("click", showProjectTodos);
   navbar.appendChild(projectsUl);
 
-  Project.list.forEach((project) => {
-    const li = document.createElement("li");
-    li.textContent = project.title;
-    projectsUl.appendChild(li);
-  });
+  const projects = JSON.parse(localStorage.getItem("projects"));
+  if (projects) {
+    projects.forEach((project) => {
+      const li = document.createElement("li");
+      li.textContent = project.title;
+      projectsUl.appendChild(li);
+    });
+  };
 
   const createProject = document.createElement("div");
   createProject.classList.add("create-project");
@@ -235,33 +233,41 @@ export function createNavbar(todoDialog, projectDialog) {
 
   return navbar;
 };
+
+function showProjectTodos(e) {
+  const mainColumn = document.querySelector(".mainColumn");
+  while (mainColumn.firstChild) {
+    mainColumn.removeChild(mainColumn.lastChild);
+  }
+
+  const projects = JSON.parse(localStorage.getItem("projects"));
+  const project = projects.find((p)=> e.target.textContent === p.title);
+  for (let todo of project.todoList) {
+    const div = document.createElement("div");
+    const title = document.createElement("h3");
+    title.textContent = todo.title;
+    const desc = document.createElement("p");
+    desc.textContent = todo.description;
+    div.appendChild(title);
+    div.appendChild(desc);
+    mainColumn.appendChild(div);
+  };
+};
+
 export function updateProjectsUl() {
   const projectsUl = document.querySelector("#projects-ul");
   while (projectsUl.firstChild) {
     projectsUl.removeChild(projectsUl.lastChild);
-  }
-  const mainColumn = document.querySelector(".mainColumn");
-  Project.list.forEach((project) => {
-    const li = document.createElement("li");
-    li.textContent = project.title;
-    li.addEventListener("click", (e) => {
+  };
 
-      while (mainColumn.firstChild) {
-        mainColumn.removeChild(mainColumn.lastChild);
-      }
-      for (let index in project.todoList) {
-        const div = document.createElement("div");
-        const title = document.createElement("h3");
-        title.textContent = project.todoList[index].title;
-        const desc = document.createElement("p");
-        desc.textContent = project.todoList[index].description;
-        div.appendChild(title);
-        div.appendChild(desc);
-        mainColumn.appendChild(div);
-      }
-    })
-    projectsUl.appendChild(li);
-  });
+  const projects = JSON.parse(localStorage.getItem("projects"));
+  if (projects) {
+    projects.forEach((project) => {
+      const li = document.createElement("li");
+      li.textContent = project.title;
+      projectsUl.appendChild(li);
+    });
+  };
 };
 
 function updateTodoProjectsInput() {
@@ -269,9 +275,12 @@ function updateTodoProjectsInput() {
   while (projectSelect.firstChild) {
     projectSelect.removeChild(projectSelect.lastChild);
   }
-  Project.list.forEach((project) => {
-    const option = document.createElement("option");
-    option.textContent = project.title;
-    projectSelect.appendChild(option);
-  });
-}
+  const projects = JSON.parse(localStorage.getItem("projects"));
+  if (projects) {
+    projects.forEach((project) => {
+      const option = document.createElement("option");
+      option.textContent = project["title"];
+      projectSelect.appendChild(option);
+    });
+  };
+};
