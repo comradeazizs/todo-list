@@ -50,3 +50,15 @@ body {
   width: auto;
   margin: 10px;
 }
+
+#projects-ul > li {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+}
+
+.icons > img {
+  height: 20px;
+  width: auto;
+  margin: 15px;
+}

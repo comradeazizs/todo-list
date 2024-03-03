@@ -1,4 +1,5 @@
 import checkbox from "./icons/checkbox.png";
+import xmark from "./icons/xmark-solid.svg";
 import { Project, TodoItem } from './todo';
 
 
@@ -212,15 +213,6 @@ export function createNavbar(todoDialog, projectDialog) {
   projectsUl.addEventListener("click", showProjectTodos);
   navbar.appendChild(projectsUl);
 
-  const projects = JSON.parse(localStorage.getItem("projects"));
-  if (projects) {
-    projects.forEach((project) => {
-      const li = document.createElement("li");
-      li.textContent = project.title;
-      projectsUl.appendChild(li);
-    });
-  };
-
   const createProject = document.createElement("div");
   createProject.classList.add("create-project");
   createProject.textContent = "Create new project";
@@ -264,7 +256,22 @@ export function updateProjectsUl() {
   if (projects) {
     projects.forEach((project) => {
       const li = document.createElement("li");
-      li.textContent = project.title;
+      const title = document.createElement("p");
+      const icons = document.createElement("div");
+      icons.classList.add("icons");
+      const xIcon = document.createElement("img");
+      xIcon.classList.add("delete-icon");
+      xIcon.src = xmark;
+      xIcon.addEventListener("click", (e) => {
+        e.stopPropagation();
+        Project.removeFromStorage(title.textContent);
+        updateProjectsUl();
+        updateTodoProjectsInput();
+      })
+      icons.appendChild(xIcon);
+      title.textContent = project.title;
+      li.appendChild(title);
+      li.appendChild(icons);
       projectsUl.appendChild(li);
     });
   };

@@ -21,6 +21,15 @@ export class TodoItem {
 }
 
 export class Project {
+  static removeFromStorage(projectTitle) {
+    const projects = JSON.parse(localStorage.getItem("projects"));
+    let index = projects.findIndex(project => project.title === projectTitle);
+    if (index !== -1) {
+      projects.splice(index, 1);
+      localStorage.setItem("projects", JSON.stringify(projects));
+    }
+  }
+
   constructor(title) {
     this.title = title;
     this.todoList = [];
