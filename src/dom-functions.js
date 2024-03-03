@@ -19,11 +19,11 @@ export class TodoDialog {
       let input = document.createElement("input");
       if (field === "title") { input.setAttribute("required", ""); };
       input.type = "text";
-      input.classList.add(`form-${field}`)
+      input.classList.add(`form-${field}`);
       input.name = field;
       input.placeholder = field[0].toUpperCase() + field.slice(1);
       fragment.appendChild(input);
-    })
+    });
 
     div = document.createElement("div");
     label = document.createElement("label");
@@ -50,7 +50,7 @@ export class TodoDialog {
       if (field === "project") {
         let projects = JSON.parse(localStorage.getItem("projects"));
         options = projects.map(project => project.title);
-      };
+      }
       options.forEach(optionValue => {
         let option = document.createElement("option");
         option.value = optionValue;
@@ -73,13 +73,13 @@ export class TodoDialog {
     dialog.appendChild(form);
 
     return dialog;
-  };
+  }
 
   static close() {
-    let dialog = document.querySelector(".dialog")
-    dialog.close()
+    let dialog = document.querySelector(".dialog");
+    dialog.close();
   }
-};
+}
 
 export class ProjectDialog {
   static create() {
@@ -93,7 +93,7 @@ export class ProjectDialog {
     input.type = "text";
     input.classList.add("project-title");
     input.name = "project-title";
-    input.placeholder = "Project title";;
+    input.placeholder = "Project title";
     form.appendChild(input);
 
     const submit = document.createElement("button");
@@ -107,7 +107,7 @@ export class ProjectDialog {
       for (let i in projects) {
         if (projects[i].title === projectName) {
           alert("A project with the same title already exists. Please enter a different title.");
-          return
+          return;
         }
       }
       (new Project(projectName)).pushToStorage();
@@ -123,8 +123,8 @@ export class ProjectDialog {
   }
 
   static close() {
-    let dialog = document.querySelector(".project-dialog")
-    dialog.close()
+    let dialog = document.querySelector(".project-dialog");
+    dialog.close();
   }
 }
 
@@ -146,7 +146,7 @@ function formSubmit(event) {
     todo.addTodo(projectTitle);
   } catch (error) { // TODO improve
     alert("A todo with the same title already exists in this project. Please enter a different title.");
-    return
+    return;
   }
 
   let form = document.querySelector(".form-container");
@@ -184,7 +184,7 @@ export function createNavbar(todoDialog, projectDialog) {
   create.addEventListener("click", (e) => {
     e.preventDefault();
     todoDialog.showModal();
-  })
+  });
 
   navbar.appendChild(create);
 
@@ -241,7 +241,7 @@ function showProjectTodos(e) {
   }
 
   const projects = JSON.parse(localStorage.getItem("projects"));
-  const project = projects.find((p)=> e.target.textContent === p.title);
+  const project = projects.find((p) => e.target.textContent === p.title);
   for (let todo of project.todoList) {
     const div = document.createElement("div");
     const title = document.createElement("h3");
