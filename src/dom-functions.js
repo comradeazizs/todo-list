@@ -1,7 +1,37 @@
 import checkbox from "./icons/checkbox.png";
 import xmark from "./icons/xmark-solid.svg";
+import pen from "./icons/pen-to-square.svg";
 import { Project, TodoItem } from './todo';
 
+
+class BaseDialog {
+  constructor() {
+    this.dialog = document.createElement("dialog");
+    this.dialog.classList.add("dialog");
+
+    this.form = document.createElement("form");
+    this.form.action = "#";
+    this.form.classList.add("form-container");
+    this.dialog.appendChild(this.form);
+
+
+    this.submit = document.createElement("button");
+    this.submit.type = "submit";
+    this.submit.classList.add("project-submit");
+  }
+
+  create() {
+    document.body.appendChild(this.dialog);
+  }
+
+  close() {
+    this.dialog.close();
+  }
+
+  showModal() {
+    this.dialog.showModal();
+  }
+}
 
 export class TodoDialog {
   static create() {
@@ -18,7 +48,7 @@ export class TodoDialog {
 
     ["title", "description"].forEach((field) => {
       let input = document.createElement("input");
-      if (field === "title") { input.setAttribute("required", ""); };
+      if (field === "title") { input.setAttribute("required", ""); }
       input.type = "text";
       input.classList.add(`form-${field}`);
       input.name = field;
@@ -82,52 +112,91 @@ export class TodoDialog {
   }
 }
 
-export class ProjectDialog {
-  static create() {
-    const dialog = document.createElement("dialog");
-    dialog.classList.add("project-dialog");
-    const form = document.createElement("form");
-    form.action = "#";
-    form.classList.add("form-container");
+export class CreateProjectDialog extends BaseDialog {
+  constructor() {
+    super();
+
+    this.dialog.id = "project-dialog";
     const input = document.createElement("input");
     input.setAttribute("required", "");
     input.type = "text";
     input.classList.add("project-title");
     input.name = "project-title";
     input.placeholder = "Project title";
-    form.appendChild(input);
+    this.form.appendChild(input);
 
-    const submit = document.createElement("button");
-    submit.type = "submit";
-    submit.textContent = "Add project";
-    submit.classList.add("project-submit");
-    submit.addEventListener("click", (e) => {
-      e.preventDefault();
-      let projectName = document.querySelector(".project-title").value;
-      let projects = JSON.parse(localStorage.getItem("projects"));
-      for (let i in projects) {
-        if (projects[i].title === projectName) {
-          alert("A project with the same title already exists. Please enter a different title.");
-          return;
-        }
-      }
-      (new Project(projectName)).pushToStorage();
-      form.reset();
-      dialog.close();
-      updateProjectsUl();
-      updateTodoProjectsInput();
-    });
-    form.appendChild(submit);
+    this.submit.textContent = "Add project";
+    this.submit.addEventListener("click", this.createProjectSubmit.bind(this));
 
-    dialog.appendChild(form);
-    return dialog;
+    this.form.appendChild(this.submit);
   }
 
-  static close() {
-    let dialog = document.querySelector(".project-dialog");
-    dialog.close();
+  createProjectSubmit(e) {
+    e.preventDefault();
+    let projectName = this.dialog.querySelector(".project-title").value;
+
+    let projects = JSON.parse(localStorage.getItem("projects")) || [];
+    for (let project of projects) {
+      if (project.title === projectName) {
+        alert("A project with the same title already exists. Please enter a different title.");
+        return;
+      }
+    }
+    (new Project(projectName)).pushToStorage();
+    this.close();
+    this.form.reset();
+    updateProjectsUl();
+    updateTodoProjectsInput();
   }
 }
+
+export class ModifyProjectDialog extends BaseDialog {
+  constructor() {
+    super();
+
+    this.dialog.id = "modify-project-dialog";
+    const input = document.createElement("input");
+    input.setAttribute("required", "");
+    input.type = "text";
+    input.classList.add("modified-project-title");
+    input.name = "modified-project-title";
+    input.placeholder = "New project title";
+    this.form.appendChild(input);
+
+    this.submit.textContent = "Rename project";
+    this.submit.addEventListener("click", this.ChangeProjectNameSubmit.bind(this));
+
+    this.form.appendChild(this.submit);
+  }
+
+  ChangeProjectNameSubmit(e) {
+    e.preventDefault();
+    let modifiedProjectName = this.dialog.querySelector(".modified-project-title").value;
+    let projects = JSON.parse(localStorage.getItem("projects")) || [];
+    for (let project of projects) {
+      if (project.title === modifiedProjectName) {
+        alert("A project with the same title already exists. Please enter a different title.");
+        return;
+      }
+    }
+    // Update project name
+    for (let project of projects) {
+      if (project.title === this.previousName) {
+        project.title = modifiedProjectName;
+      }
+    }
+
+    localStorage.setItem("projects", JSON.stringify(projects));
+    this.close();
+    updateProjectsUl();
+    updateTodoProjectsInput();
+  }
+}
+
+const projDial = new CreateProjectDialog();
+projDial.create();
+const changeProjectDialog = new ModifyProjectDialog();
+changeProjectDialog.create();
 
 function formSubmit(event) {
   event.preventDefault();
@@ -175,7 +244,7 @@ export function createTopbar() {
   return topbar;
 };
 
-export function createNavbar(todoDialog, projectDialog) {
+export function createNavbar(todoDialog) {
   const navbar = document.createElement("div");
   navbar.setAttribute("id", "navbar");
 
@@ -218,7 +287,7 @@ export function createNavbar(todoDialog, projectDialog) {
   createProject.textContent = "Create new project";
   createProject.addEventListener("click", (e) => {
     e.preventDefault();
-    projectDialog.showModal();
+    projDial.showModal(); //project Dialog
   });
 
   navbar.appendChild(createProject);
@@ -227,7 +296,7 @@ export function createNavbar(todoDialog, projectDialog) {
 };
 
 function showProjectTodos(e) {
-  const mainColumn = document.querySelector(".mainColumn");
+  const mainColumn = document.getElementById("main-column");
   while (mainColumn.firstChild) {
     mainColumn.removeChild(mainColumn.lastChild);
   }
@@ -246,34 +315,47 @@ function showProjectTodos(e) {
   };
 };
 
+
 export function updateProjectsUl() {
   const projectsUl = document.querySelector("#projects-ul");
   while (projectsUl.firstChild) {
     projectsUl.removeChild(projectsUl.lastChild);
   };
 
-  const projects = JSON.parse(localStorage.getItem("projects"));
-  if (projects) {
-    projects.forEach((project) => {
-      const li = document.createElement("li");
-      const title = document.createElement("p");
-      const icons = document.createElement("div");
-      icons.classList.add("icons");
-      const xIcon = document.createElement("img");
-      xIcon.classList.add("delete-icon");
-      xIcon.src = xmark;
-      xIcon.addEventListener("click", (e) => {
-        e.stopPropagation();
-        Project.removeFromStorage(title.textContent);
-        updateProjectsUl();
-        updateTodoProjectsInput();
-      })
-      icons.appendChild(xIcon);
-      title.textContent = project.title;
-      li.appendChild(title);
-      li.appendChild(icons);
-      projectsUl.appendChild(li);
+  const projects = JSON.parse(localStorage.getItem("projects")) || [];
+  for (let project of projects) {
+    const li = document.createElement("li");
+    const title = document.createElement("p");
+    const icons = document.createElement("div");
+    icons.classList.add("icons");
+
+    const penIcon = document.createElement("img");
+    penIcon.classList.add("edit-icon");
+    penIcon.src = pen;
+    penIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      // save projectName on memory
+      changeProjectDialog.previousName = e.target.parentElement.parentElement.firstChild.textContent;
+
+      changeProjectDialog.showModal();
     });
+    icons.appendChild(penIcon);
+
+    const xIcon = document.createElement("img");
+    xIcon.classList.add("delete-icon");
+    xIcon.src = xmark;
+    xIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      Project.removeFromStorage(project.title);
+      updateProjectsUl();
+      updateTodoProjectsInput();
+    });
+    icons.appendChild(xIcon);
+
+    title.textContent = project.title;
+    li.appendChild(title);
+    li.appendChild(icons);
+    projectsUl.appendChild(li);
   };
 };
 

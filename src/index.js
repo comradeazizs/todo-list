@@ -1,7 +1,7 @@
 import "./style.css";
 import calendarToday from "./icons/calendar-today.svg";
 import calendarUpcoming from "./icons/calendar-range.svg";
-import { TodoDialog, ProjectDialog, createNavbar, createTopbar, updateProjectsUl } from "./dom-functions";
+import { TodoDialog, createNavbar, createTopbar, updateProjectsUl } from "./dom-functions";
 import { TodoItem, Project } from "./todo";
 
 const app = document.querySelector("#content");
@@ -14,18 +14,16 @@ if (!projects) {
 }
 
 let todoDial = TodoDialog.create();
-let projDial = ProjectDialog.create();
 
 app.appendChild(todoDial);
-app.appendChild(projDial);
 
 const contentWrapper = document.createElement("div");
 contentWrapper.classList.add("contentWrapper");
 app.appendChild(createTopbar());
 app.appendChild(contentWrapper);
-contentWrapper.appendChild(createNavbar(todoDial, projDial));
+contentWrapper.appendChild(createNavbar(todoDial));
 const mainColumn = document.createElement("div");
-mainColumn.classList.add("mainColumn");
+mainColumn.id = "main-column";
 contentWrapper.appendChild(mainColumn);
 
 updateProjectsUl();
