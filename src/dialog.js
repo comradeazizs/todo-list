@@ -127,19 +127,25 @@ class CreateTodoDialog extends BaseDialog {
   }
 }
 
-class CreateProjectDialog extends BaseDialog {
-  constructor() {
+class ProjectDialog extends BaseDialog {
+  constructor(id) {
     super();
 
-    this.dialog.id = "project-dialog";
+    this.dialog.id = `${id}-project-dialog`;
     const input = document.createElement("input");
     input.setAttribute("required", "");
     input.type = "text";
     input.classList.add("project-title");
-    input.name = "project-title";
+    input.name = `${id}-project-title`;
     input.maxLength = 20;
     input.placeholder = "Project title";
     this.form.appendChild(input);
+  }
+}
+
+class CreateProjectDialog extends ProjectDialog {
+  constructor() {
+    super("create");
 
     this.submit.textContent = "Add project";
     this.submit.addEventListener("click", this.createProjectSubmit.bind(this));
@@ -164,30 +170,20 @@ class CreateProjectDialog extends BaseDialog {
   }
 }
 
-class ModifyProjectDialog extends BaseDialog {
+class RenameProjectDialog extends ProjectDialog {
   constructor() {
-    super();
-
-    this.dialog.id = "modify-project-dialog";
-    const input = document.createElement("input");
-    input.setAttribute("required", "");
-    input.type = "text";
-    input.classList.add("modified-project-title");
-    input.name = "modified-project-title";
-    input.maxLength = 20;
-    input.placeholder = "New project title";
-    this.form.appendChild(input);
+    super("rename");
 
     this.submit.textContent = "Rename project";
-    this.submit.addEventListener("click", this.ChangeProjectNameSubmit.bind(this));
+    this.submit.addEventListener("click", this.renameProjectSubmit.bind(this));
   }
 
-  ChangeProjectNameSubmit(e) {
+  renameProjectSubmit(e) {
     e.preventDefault();
-    let modifiedProjectName = this.dialog.querySelector(".modified-project-title").value;
+    let newProjectName = this.dialog.querySelector(".project-title").value;
     let projects = JSON.parse(localStorage.getItem("projects")) || [];
     for (let project of projects) {
-      if (project.title === modifiedProjectName) {
+      if (project.title === newProjectName) {
         alert("A project with the same title already exists. Please enter a different title.");
         return;
       }
@@ -195,20 +191,19 @@ class ModifyProjectDialog extends BaseDialog {
     // Update project name
     for (let project of projects) {
       if (project.title === this.previousName) {
-        project.title = modifiedProjectName;
+        project.title = newProjectName;
+        localStorage.setItem("projects", JSON.stringify(projects));
+        updateProjectsUl();
+        updateTodoProjectsInput();
       }
     }
-
-    localStorage.setItem("projects", JSON.stringify(projects));
     this.close();
-    updateProjectsUl();
-    updateTodoProjectsInput();
   }
 }
 
 export const createProjectDialog = new CreateProjectDialog();
 createProjectDialog.create();
-export const changeProjectDialog = new ModifyProjectDialog();
+export const changeProjectDialog = new RenameProjectDialog();
 changeProjectDialog.create();
 export const createTodoDialog = new CreateTodoDialog("create");
 createTodoDialog.create();
