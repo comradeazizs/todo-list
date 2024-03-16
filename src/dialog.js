@@ -32,7 +32,7 @@ class BaseDialog {
   }
 }
 
-class CreateTodoDialog extends BaseDialog {
+class TodoDialog extends BaseDialog {
   constructor(id) {
     super();
 
@@ -95,12 +95,18 @@ class CreateTodoDialog extends BaseDialog {
       fragment.appendChild(div);
     }
     this.form.appendChild(fragment);
+  }
+}
 
-    this.submit.addEventListener("click", this.formSubmit.bind(this));
+class CreateTodoDialog extends TodoDialog {
+  constructor() {
+    super("create");
+
+    this.submit.addEventListener("click", this.createTodoFormSubmit.bind(this));
     this.submit.textContent = "Add todo";
   }
 
-  formSubmit(e) {
+  createTodoFormSubmit(e) {
     e.preventDefault();
     let date = new Date(document.getElementById(`${this.id}-due-date`).valueAsNumber);
     let todo = new TodoItem(
