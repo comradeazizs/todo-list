@@ -54,6 +54,7 @@ body {
   display: flex;
   list-style-type: none;
   padding: 1rem;
+  cursor: pointer;
 }
 
 #projects-ul>li:hover {
@@ -64,6 +65,8 @@ body {
 #projects-ul>li>p {
   flex: 1;
   font-size: 1.2rem;
+  width: auto;
+  word-break: break-word;
 }
 
 .icons {
