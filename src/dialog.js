@@ -137,6 +137,7 @@ class CreateProjectDialog extends BaseDialog {
     input.type = "text";
     input.classList.add("project-title");
     input.name = "project-title";
+    input.maxLength = 20;
     input.placeholder = "Project title";
     this.form.appendChild(input);
 
@@ -173,6 +174,7 @@ class ModifyProjectDialog extends BaseDialog {
     input.type = "text";
     input.classList.add("modified-project-title");
     input.name = "modified-project-title";
+    input.maxLength = 20;
     input.placeholder = "New project title";
     this.form.appendChild(input);
 
