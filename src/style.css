@@ -1,7 +1,7 @@
 :root {
   --lime: #a3e635;
   --fuchsia: #ff00ff;
-  --dark-white: #e1d9d1;
+  --dark-white: #eeebe8;
 }
 
 * {
@@ -16,8 +16,9 @@ body {
   display: flex;
 }
 
-.mainColumn {
+#main-column {
   flex: 1;
+  padding: 1rem;
 }
 
 #topbar {
@@ -34,7 +35,7 @@ body {
 }
 
 #navbar {
-  padding: 15px;
+  padding: 0.5rem;
   width: max(250px, 20vw);
   min-height: calc(100vh - 60px);
   background-color: var(--dark-white);
@@ -45,20 +46,66 @@ body {
   display: inline;
 }
 
-#navbar>img {
-  height: 30px;
-  width: auto;
-  margin: 10px;
-}
-
-#projects-ul > li {
-  display: flex;
-  list-style-type: none;
+#projects-ul {
   padding: 0;
 }
 
-.icons > img {
+#projects-ul>li {
+  display: flex;
+  list-style-type: none;
+  padding: 1rem;
+}
+
+#projects-ul>li:hover {
+  background-color: rgb(193, 196, 195);
+  border-radius: 5px;
+}
+
+#projects-ul>li>p {
+  flex: 1;
+  font-size: 1.2rem;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+}
+
+.icons>img {
   height: 20px;
   width: auto;
   margin: 15px;
+}
+
+.todo-container {
+  display: flex;
+}
+
+.todo {
+  flex: 1;
+  padding: 0.5rem;
+  margin: 1rem;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.todo-high {
+  background-color: red;
+}
+
+.todo-medium {
+  background-color: yellow
+}
+
+.todo-low {
+  background-color: lightgreen;
+}
+
+.todo.completed {
+  background-color: rgb(174, 173, 173);
+}
+
+.todo.completed p,
+.todo.completed h3 {
+  text-decoration: line-through;
 }

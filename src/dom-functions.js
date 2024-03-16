@@ -86,14 +86,46 @@ function showProjectTodos(e) {
   const projects = JSON.parse(localStorage.getItem("projects"));
   const project = projects.find((p) => e.target.textContent === p.title);
   for (let todo of project.todoList) {
-    const div = document.createElement("div");
+    const todoContainer = document.createElement("div");
+    todoContainer.classList.add("todo-container");
+
+    const todoChekbox = document.createElement("input");
+    todoChekbox.type = "checkbox";
+    todoChekbox.addEventListener("click", (e) => {
+      todo.completed = e.target.checked;
+      console.log(todo.completed);
+      localStorage.setItem("projects", JSON.stringify(projects));
+      if (e.target.checked) {
+        todoDiv.classList.add("completed");
+      } else {
+        todoDiv.classList.remove("completed");
+      }
+    });
+
+    const todoDiv = document.createElement("div");
+    todoDiv.classList.add("todo", `todo-${todo.priority}`);
+    if (todo.completed) {
+      todoChekbox.checked = true;
+      todoDiv.classList.add("completed");
+    }
+
     const title = document.createElement("h3");
     title.textContent = todo.title;
     const desc = document.createElement("p");
     desc.textContent = todo.description;
-    div.appendChild(title);
-    div.appendChild(desc);
-    mainColumn.appendChild(div);
+
+    const timeText = document.createElement("p");
+    if (todo.dueDate) {
+      const time = new Date(todo.dueDate).toLocaleDateString("en-GB");
+      timeText.textContent = time;
+    }
+
+    todoDiv.appendChild(title);
+    todoDiv.appendChild(desc);
+    todoDiv.appendChild(timeText);
+    todoContainer.appendChild(todoChekbox);
+    todoContainer.appendChild(todoDiv);
+    mainColumn.appendChild(todoContainer);
   };
 };
 
@@ -141,7 +173,7 @@ export function updateProjectsUl() {
   };
 };
 
-function updateTodoProjectsInput() {
+export function updateTodoProjectsInput() {
   const projectSelect = document.querySelector("#create-project-select");
   while (projectSelect.firstChild) {
     projectSelect.removeChild(projectSelect.lastChild);

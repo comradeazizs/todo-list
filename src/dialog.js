@@ -1,4 +1,5 @@
 import { TodoItem, Project } from "./todo";
+import { updateProjectsUl, updateTodoProjectsInput } from "./dom-functions";
 
 
 class BaseDialog {
@@ -11,10 +12,11 @@ class BaseDialog {
     this.form.classList.add("form-container");
     this.dialog.appendChild(this.form);
 
-
     this.submit = document.createElement("button");
     this.submit.type = "submit";
     this.submit.classList.add("project-submit");
+
+    this.form.appendChild(this.submit);
   }
 
   create() {
@@ -73,8 +75,12 @@ class CreateTodoDialog extends BaseDialog {
 
       let options = ["low", "medium", "high"];
       if (field === "project") {
-        let projects = JSON.parse(localStorage.getItem("projects"));
-        options = projects.map(project => project.title);
+        const projects = JSON.parse(localStorage.getItem("projects"));
+        if (projects) {
+          options = projects.map(project => project.title);
+        } else {
+          options = [];
+        }
       }
 
       for (let optionValue of options) {
@@ -92,7 +98,6 @@ class CreateTodoDialog extends BaseDialog {
 
     this.submit.addEventListener("click", this.formSubmit.bind(this));
     this.submit.textContent = "Add todo";
-    this.form.appendChild(this.submit);
   }
 
   formSubmit(e) {
@@ -137,8 +142,6 @@ class CreateProjectDialog extends BaseDialog {
 
     this.submit.textContent = "Add project";
     this.submit.addEventListener("click", this.createProjectSubmit.bind(this));
-
-    this.form.appendChild(this.submit);
   }
 
   createProjectSubmit(e) {
@@ -175,8 +178,6 @@ class ModifyProjectDialog extends BaseDialog {
 
     this.submit.textContent = "Rename project";
     this.submit.addEventListener("click", this.ChangeProjectNameSubmit.bind(this));
-
-    this.form.appendChild(this.submit);
   }
 
   ChangeProjectNameSubmit(e) {
@@ -203,8 +204,8 @@ class ModifyProjectDialog extends BaseDialog {
   }
 }
 
-export const projDial = new CreateProjectDialog();
-projDial.create();
+export const createProjectDialog = new CreateProjectDialog();
+createProjectDialog.create();
 export const changeProjectDialog = new ModifyProjectDialog();
 changeProjectDialog.create();
 export const createTodoDialog = new CreateTodoDialog("create");
