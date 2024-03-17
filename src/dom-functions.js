@@ -87,7 +87,7 @@ export function createNavbar() {
   return navbar;
 };
 
-function showActiveProjectTodos() {
+export function showActiveProjectTodos() {
   const mainColumn = document.getElementById("main-column");
   while (mainColumn.firstChild) {
     mainColumn.removeChild(mainColumn.lastChild);
@@ -160,6 +160,10 @@ function showActiveProjectTodos() {
       if (todoIndex !== -1) {
         project.todoList.splice(todoIndex, 1);
         localStorage.setItem("projects", JSON.stringify(projects));
+      }
+
+      if (projectName === activeProjectName) {
+        showActiveProjectTodos();
       }
     });
     icons.appendChild(xIcon);

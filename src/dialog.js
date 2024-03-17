@@ -1,5 +1,5 @@
 import { TodoItem, Project } from "./todo";
-import { updateProjectsUl, updateTodoProjectsInput } from "./dom-functions";
+import { updateProjectsUl, updateTodoProjectsInput, showActiveProjectTodos } from "./dom-functions";
 
 
 class BaseDialog {
@@ -126,6 +126,10 @@ class CreateTodoDialog extends TodoDialog {
     } catch (error) { // TODO improve
       alert("A todo with the same title already exists in this project. Please enter a different title.");
       return;
+    }
+    let activeProjectName = document.getElementById("active").dataset.projectName;
+    if (activeProjectName === projectTitle) {
+      showActiveProjectTodos();
     }
 
     this.form.reset();
