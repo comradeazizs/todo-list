@@ -88,6 +88,8 @@ function showProjectTodos(e) {
   for (let todo of project.todoList) {
     const todoContainer = document.createElement("div");
     todoContainer.classList.add("todo-container");
+    todoContainer.dataset.projectName = project.title;
+    todoContainer.dataset.todoName = todo.title;
 
     const todoChekbox = document.createElement("input");
     todoChekbox.type = "checkbox";
@@ -120,11 +122,43 @@ function showProjectTodos(e) {
       timeText.textContent = time;
     }
 
+    const icons = document.createElement("div");
+    icons.classList.add("icons");
+
+    const penIcon = document.createElement("img");
+    penIcon.classList.add("edit-icon");
+    penIcon.src = pen;
+    penIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+    icons.appendChild(penIcon);
+
+    const xIcon = document.createElement("img");
+    xIcon.classList.add("delete-icon");
+    xIcon.src = xmark;
+    xIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      let projectName = e.target.parentElement.parentElement.dataset.projectName;
+      let todoName = e.target.parentElement.parentElement.dataset.todoName;
+
+      const projects = JSON.parse(localStorage.getItem("projects"));
+      const project = projects.find((p) => p.title === projectName);
+
+      let todoIndex = project.todoList.findIndex(todo => todo.title === todoName);
+      if (todoIndex !== -1) {
+        project.todoList.splice(todoIndex, 1);
+        localStorage.setItem("projects", JSON.stringify(projects));
+      }
+    });
+    icons.appendChild(xIcon);
+
     todoDiv.appendChild(title);
     todoDiv.appendChild(desc);
     todoDiv.appendChild(timeText);
     todoContainer.appendChild(todoChekbox);
     todoContainer.appendChild(todoDiv);
+    todoContainer.appendChild(icons);
     mainColumn.appendChild(todoContainer);
   };
 };

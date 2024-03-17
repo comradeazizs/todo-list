@@ -44,11 +44,4 @@ export class Project {
       localStorage.setItem("projects", JSON.stringify(projects));
     }
   }
-
-  removeTodo(title) {
-    let index = this.todoList.findIndex(item => item.title === title);
-    if (index !== -1) {
-      this.todoList.splice(index, 1);
-    }
-  }
 }

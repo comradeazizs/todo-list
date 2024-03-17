@@ -82,12 +82,17 @@ body {
 
 .todo-container {
   display: flex;
+  margin: 0.5rem 0;
+}
+
+.todo-container input {
+  margin: 0;
 }
 
 .todo {
   flex: 1;
   padding: 0.5rem;
-  margin: 1rem;
+  margin-left: 0.5rem;
   border: 1px solid black;
   border-radius: 5px;
 }
