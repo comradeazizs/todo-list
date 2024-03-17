@@ -61,7 +61,17 @@ export function createNavbar() {
 
   const projectsUl = document.createElement("ul");
   projectsUl.id = "projects-ul";
-  projectsUl.addEventListener("click", showProjectTodos);
+  projectsUl.addEventListener("click", e => {
+    if (e.target.hasAttribute("data-project-name") && e.target.id !== "active") {
+      let previousProject = document.getElementById("active");
+      if (previousProject) {
+        previousProject.removeAttribute("id");
+      }
+      e.target.id = "active";
+
+      showActiveProjectTodos();
+    }
+  });
   navbar.appendChild(projectsUl);
 
   const createProject = document.createElement("div");
@@ -77,14 +87,16 @@ export function createNavbar() {
   return navbar;
 };
 
-function showProjectTodos(e) {
+function showActiveProjectTodos() {
   const mainColumn = document.getElementById("main-column");
   while (mainColumn.firstChild) {
     mainColumn.removeChild(mainColumn.lastChild);
   }
 
+  const activeProjectName = document.getElementById("active").dataset.projectName;
+
   const projects = JSON.parse(localStorage.getItem("projects"));
-  const project = projects.find((p) => e.target.textContent === p.title);
+  const project = projects.find((p) => p.title === activeProjectName);
   for (let todo of project.todoList) {
     const todoContainer = document.createElement("div");
     todoContainer.classList.add("todo-container");
@@ -95,7 +107,6 @@ function showProjectTodos(e) {
     todoChekbox.type = "checkbox";
     todoChekbox.addEventListener("click", (e) => {
       todo.completed = e.target.checked;
-      console.log(todo.completed);
       localStorage.setItem("projects", JSON.stringify(projects));
       if (e.target.checked) {
         todoDiv.classList.add("completed");
@@ -203,6 +214,7 @@ export function updateProjectsUl() {
     });
     icons.appendChild(xIcon);
 
+    li.dataset.projectName = project.title;
     title.textContent = project.title;
     li.appendChild(title);
     li.appendChild(icons);

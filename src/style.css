@@ -67,6 +67,7 @@ body {
   font-size: 1.2rem;
   width: auto;
   word-break: break-word;
+  pointer-events: none;
 }
 
 .icons {
