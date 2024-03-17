@@ -152,7 +152,7 @@ export function updateProjectsUl() {
       changeProjectDialog.previousName = e.target.parentElement.parentElement.firstChild.textContent;
 
       // open dialog and set input value
-      const input = changeProjectDialog.dialog.querySelector(".modified-project-title");
+      const input = changeProjectDialog.dialog.querySelector(".project-title");
       input.value = changeProjectDialog.previousName;
       changeProjectDialog.showModal();
     });
