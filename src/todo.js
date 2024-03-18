@@ -15,7 +15,7 @@ export class TodoItem {
       projects[index].todoList.push(this);
       localStorage.setItem("projects", JSON.stringify(projects));
     } else {
-      throw new Error("Todo with that title already exists in this Project");
+      throw new DuplicateTodoTitleError("Todo with that title already exists in this Project");
     }
   }
 }

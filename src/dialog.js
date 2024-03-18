@@ -123,10 +123,11 @@ class CreateTodoDialog extends TodoDialog {
 
     try {
       todo.addTodo(projectTitle);
-    } catch (error) { // TODO improve
+    } catch (DuplicateTodoTitleError) {
       alert("A todo with the same title already exists in this project. Please enter a different title.");
       return;
     }
+
     let activeProjectName = document.getElementById("active").dataset.projectName;
     if (activeProjectName === projectTitle) {
       showActiveProjectTodos();
