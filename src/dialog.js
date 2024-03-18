@@ -166,14 +166,12 @@ class CreateProjectDialog extends ProjectDialog {
     e.preventDefault();
     let projectName = this.dialog.querySelector(".project-title").value;
 
-    let projects = JSON.parse(localStorage.getItem("projects")) || [];
-    for (let project of projects) {
-      if (project.title === projectName) {
-        alert("A project with the same title already exists. Please enter a different title.");
-        return;
-      }
+    try {
+      (new Project(projectName)).pushToStorage();
+    } catch (DuplicateProjectTitleError) {
+      alert("A project with the same title already exists. Please enter a different title.");
+      return;
     }
-    (new Project(projectName)).pushToStorage();
     this.close();
     this.form.reset();
     updateProjectsUl();
