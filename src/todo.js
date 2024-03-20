@@ -37,7 +37,7 @@ export class Project {
 
   pushToStorage() {
     const projects = JSON.parse(localStorage.getItem("projects"));
-    if (!projects) {
+    if (!projects.length) {
       localStorage.setItem("projects", JSON.stringify([this]));
     } else {
       if (projects.some(project => project.title !== this.title)) {
