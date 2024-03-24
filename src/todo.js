@@ -40,11 +40,11 @@ export class Project {
     if (!projects.length) {
       localStorage.setItem("projects", JSON.stringify([this]));
     } else {
-      if (projects.some(project => project.title !== this.title)) {
+      if (projects.some(project => project.title === this.title)) {
+        throw new DuplicateProjectTitleError("Project title already exists");
+      } else {
         projects.push(this);
         localStorage.setItem("projects", JSON.stringify(projects));
-      } else {
-        throw new DuplicateProjectTitleError("Project title already exists");
       }
     }
   }
