@@ -143,7 +143,23 @@ export function showActiveProjectTodos() {
       e.stopPropagation();
       changeTodoDialog.previousProjectName = e.target.parentElement.parentElement.dataset.todoProjectName;
       changeTodoDialog.previousTodoName = e.target.parentElement.parentElement.dataset.todoName;
+
+      const projects = localStorage.getItem("projects");
+      const project = JSON.parse(projects).find((p) => p.title === changeTodoDialog.previousProjectName);
+      const todo = project.todoList.find((t) => t.title === changeTodoDialog.previousTodoName);
+
+      document.getElementById("change-project-select").value = project.title;
+      changeTodoDialog.dialog.querySelector(".form-title").value = todo.title;
+      changeTodoDialog.dialog.querySelector(".form-description").value = todo.description;
+      if (todo.dueDate) {
+        document.getElementById("change-due-date").value = todo.dueDate.split("T")[0];
+      }
+      document.getElementById("change-priority-select").value = todo.priority;
+
+
+
       changeTodoDialog.showModal();
+
     });
     icons.appendChild(penIcon);
 
