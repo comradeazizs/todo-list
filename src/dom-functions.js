@@ -58,6 +58,15 @@ export function createNavbar() {
   projectHeader.textContent = "Projects: ";
   navbar.appendChild(projectHeader);
 
+  const createProject = document.createElement("button");
+  createProject.classList.add("create-project");
+  createProject.textContent = "New project";
+  createProject.addEventListener("click", (e) => {
+    e.preventDefault();
+    createProjectDialog.showModal();
+  });
+
+  navbar.appendChild(createProject);
 
   const projectsUl = document.createElement("ul");
   projectsUl.id = "projects-ul";
@@ -74,15 +83,6 @@ export function createNavbar() {
   });
   navbar.appendChild(projectsUl);
 
-  const createProject = document.createElement("div");
-  createProject.classList.add("create-project");
-  createProject.textContent = "Create new project";
-  createProject.addEventListener("click", (e) => {
-    e.preventDefault();
-    createProjectDialog.showModal();
-  });
-
-  navbar.appendChild(createProject);
 
   return navbar;
 };
@@ -156,10 +156,7 @@ export function showActiveProjectTodos() {
       }
       document.getElementById("change-priority-select").value = todo.priority;
 
-
-
       changeTodoDialog.showModal();
-
     });
     icons.appendChild(penIcon);
 
