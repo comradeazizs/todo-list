@@ -43,7 +43,7 @@ class TodoDialog extends BaseDialog {
 
     for (let field of ["Title", "Description"]) {
       let input = document.createElement("input");
-      if (field === "title") { input.setAttribute("required", ""); }
+      if (field === "Title") { input.setAttribute("required", ""); }
       input.type = "text";
       input.classList.add(`form-${field.toLowerCase()}`);
       input.name = field;
@@ -138,6 +138,52 @@ class CreateTodoDialog extends TodoDialog {
   }
 }
 
+class ChangeTodoDialog extends TodoDialog {
+  constructor() {
+    super("change");
+
+    this.submit.addEventListener("click", this.changeTodoFormSubmit.bind(this));
+    this.submit.textContent = "Change todo";
+  }
+
+  changeTodoFormSubmit(e) {
+    e.preventDefault();
+
+    const projects = JSON.parse(localStorage.getItem("projects"));
+    const project = projects.find(project => project.title === this.previousProjectName);
+    const todoIndex = project.todoList.findIndex(todo => todo.title === this.previousTodoName);
+
+    let date = new Date(document.getElementById(`${this.id}-due-date`).valueAsNumber);
+    let todo = new TodoItem(
+      this.dialog.querySelector(".form-title").value,
+      this.dialog.querySelector(".form-description").value,
+      (date instanceof Date && !isNaN(date)) ? date : null,
+      document.getElementById(`${this.id}-priority-select`).value,
+    );
+
+    if (project.todoList[todoIndex].completed) {
+      todo.completed = true;
+    }
+
+    let projectTitle = document.getElementById(`${this.id}-project-select`).value;
+
+    if (projectTitle === this.previousProjectName) {
+      project.todoList.splice(todoIndex, 1, todo);
+    } else {
+      project.todoList.splice(todoIndex, 1);
+      const newProject = projects.find(project => project.title === projectTitle);
+      newProject.todoList.push(todo);
+    }
+
+    localStorage.setItem("projects", JSON.stringify(projects));
+
+    showActiveProjectTodos();
+
+    this.form.reset();
+    this.dialog.close();
+  }
+}
+
 class ProjectDialog extends BaseDialog {
   constructor(id) {
     super();
@@ -216,3 +262,5 @@ export const changeProjectDialog = new RenameProjectDialog();
 changeProjectDialog.create();
 export const createTodoDialog = new CreateTodoDialog("create");
 createTodoDialog.create();
+export const changeTodoDialog = new ChangeTodoDialog("change");
+changeTodoDialog.create();

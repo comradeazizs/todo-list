@@ -4,7 +4,7 @@ import pen from "./icons/pen-to-square.svg";
 
 import { Project, TodoItem } from './todo';
 
-import { createProjectDialog, changeProjectDialog, createTodoDialog } from "./dialog";
+import { createProjectDialog, changeProjectDialog, createTodoDialog, changeTodoDialog } from "./dialog";
 
 
 /**
@@ -100,7 +100,7 @@ export function showActiveProjectTodos() {
   for (let todo of project.todoList) {
     const todoContainer = document.createElement("div");
     todoContainer.classList.add("todo-container");
-    todoContainer.dataset.projectName = project.title;
+    todoContainer.dataset.todoProjectName = project.title;
     todoContainer.dataset.todoName = todo.title;
 
     const todoChekbox = document.createElement("input");
@@ -141,6 +141,9 @@ export function showActiveProjectTodos() {
     penIcon.src = pen;
     penIcon.addEventListener("click", (e) => {
       e.stopPropagation();
+      changeTodoDialog.previousProjectName = e.target.parentElement.parentElement.dataset.todoProjectName;
+      changeTodoDialog.previousTodoName = e.target.parentElement.parentElement.dataset.todoName;
+      changeTodoDialog.showModal();
     });
     icons.appendChild(penIcon);
 
@@ -150,7 +153,7 @@ export function showActiveProjectTodos() {
     xIcon.addEventListener("click", (e) => {
       e.stopPropagation();
 
-      let projectName = e.target.parentElement.parentElement.dataset.projectName;
+      let projectName = e.target.parentElement.parentElement.dataset.todoProjectName;
       let todoName = e.target.parentElement.parentElement.dataset.todoName;
 
       const projects = JSON.parse(localStorage.getItem("projects"));
@@ -227,16 +230,21 @@ export function updateProjectsUl() {
 };
 
 export function updateTodoProjectsInput() {
-  const projectSelect = document.querySelector("#create-project-select");
-  while (projectSelect.firstChild) {
-    projectSelect.removeChild(projectSelect.lastChild);
-  }
   const projects = JSON.parse(localStorage.getItem("projects"));
-  if (projects) {
-    projects.forEach((project) => {
-      const option = document.createElement("option");
-      option.textContent = project["title"];
-      projectSelect.appendChild(option);
-    });
-  };
+  const projectSelect = ["#change-project-select", "#create-project-select"];
+
+  if (projects.length) {
+    for (let selector of projectSelect) {
+      const input = document.querySelector(selector);
+      while (input.firstChild) {
+        input.removeChild(input.lastChild);
+      };
+
+      for (let p of projects) {
+        const option = document.createElement("option");
+        option.textContent = p["title"];
+        input.appendChild(option);
+      };
+    };
+  }
 };
