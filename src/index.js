@@ -33,3 +33,4 @@ mainColumn.id = "main-column";
 contentWrapper.appendChild(mainColumn);
 
 updateProjectsUl();
+updateTodoProjectsInput();
