@@ -1,4 +1,7 @@
 import "./style.css";
+
+import "./dialog";
+
 import calendarToday from "./icons/calendar-today.svg";
 import calendarUpcoming from "./icons/calendar-range.svg";
 import { createNavbar, createTopbar, updateProjectsUl, updateTodoProjectsInput } from "./dom-functions";

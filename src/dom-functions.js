@@ -4,7 +4,7 @@ import pen from "./icons/pen-to-square.svg";
 
 import { Project, TodoItem } from './todo';
 
-import { createProjectDialog, changeProjectDialog, createTodoDialog, changeTodoDialog } from "./dialog";
+import { previousProjectName, previousTodoName, previousTodoProjectName, setPreviousProjectName, setPreviousTodoDetails } from "./dialog";
 
 
 /**
@@ -30,15 +30,17 @@ export function createNavbar() {
   const navbar = document.createElement("div");
   navbar.setAttribute("id", "navbar");
 
-  const create = document.createElement("button");
-  create.textContent = "Create";
-  create.classList.add("todo-create");
-  create.addEventListener("click", (e) => {
+  const createTodoBtn = document.createElement("button");
+  createTodoBtn.textContent = "Create";
+  createTodoBtn.classList.add("todo-create");
+
+  const createTodoDialog = document.getElementById("create-todo-dialog");
+  createTodoBtn.addEventListener("click", (e) => {
     e.preventDefault();
     createTodoDialog.showModal();
   });
 
-  navbar.appendChild(create);
+  navbar.appendChild(createTodoBtn);
 
   const primaryUl = document.createElement("ul");
   primaryUl.setAttribute("id", "primary-ul");
@@ -58,15 +60,17 @@ export function createNavbar() {
   projectHeader.textContent = "Projects: ";
   navbar.appendChild(projectHeader);
 
-  const createProject = document.createElement("button");
-  createProject.classList.add("create-project");
-  createProject.textContent = "New project";
-  createProject.addEventListener("click", (e) => {
+  const createProjectBtn = document.createElement("button");
+  createProjectBtn.classList.add("create-project");
+  createProjectBtn.textContent = "New project";
+
+  const createProjectDialog = document.getElementById("create-project-dialog");
+  createProjectBtn.addEventListener("click", (e) => {
     e.preventDefault();
     createProjectDialog.showModal();
   });
 
-  navbar.appendChild(createProject);
+  navbar.appendChild(createProjectBtn);
 
   const projectsUl = document.createElement("ul");
   projectsUl.id = "projects-ul";
@@ -139,18 +143,25 @@ export function showActiveProjectTodos() {
     const penIcon = document.createElement("img");
     penIcon.classList.add("edit-icon");
     penIcon.src = pen;
+
+    const changeTodoDialog = document.getElementById("change-todo-dialog");
+
     penIcon.addEventListener("click", (e) => {
       e.stopPropagation();
-      changeTodoDialog.previousProjectName = e.target.parentElement.parentElement.dataset.todoProjectName;
-      changeTodoDialog.previousTodoName = e.target.parentElement.parentElement.dataset.todoName;
+      setPreviousTodoDetails(
+        e.target.parentElement.parentElement.dataset.todoName,
+        e.target.parentElement.parentElement.dataset.todoProjectName
+      );
 
-      const projects = localStorage.getItem("projects");
-      const project = JSON.parse(projects).find((p) => p.title === changeTodoDialog.previousProjectName);
-      const todo = project.todoList.find((t) => t.title === changeTodoDialog.previousTodoName);
+      const projects = JSON.parse(localStorage.getItem("projects"));
+
+      const project = projects.find((p) => p.title === previousTodoProjectName);
+      console.log(project);
+      const todo = project.todoList.find((t) => t.title === previousTodoName);
 
       document.getElementById("change-project-select").value = project.title;
-      changeTodoDialog.dialog.querySelector(".form-title").value = todo.title;
-      changeTodoDialog.dialog.querySelector(".form-description").value = todo.description;
+      changeTodoDialog.querySelector(".form-title").value = todo.title;
+      changeTodoDialog.querySelector(".form-description").value = todo.description;
       if (todo.dueDate) {
         document.getElementById("change-due-date").value = todo.dueDate.split("T")[0];
       }
@@ -202,6 +213,9 @@ export function updateProjectsUl() {
   };
 
   const projects = JSON.parse(localStorage.getItem("projects")) || [];
+
+  const changeProjectDialog = document.getElementById("rename-project-dialog");
+
   for (let project of projects) {
     const li = document.createElement("li");
     const title = document.createElement("p");
@@ -213,12 +227,13 @@ export function updateProjectsUl() {
     penIcon.src = pen;
     penIcon.addEventListener("click", (e) => {
       e.stopPropagation();
+
       // save projectName on memory
-      changeProjectDialog.previousName = e.target.parentElement.parentElement.firstChild.textContent;
+      setPreviousProjectName(e.target.parentElement.parentElement.firstChild.textContent);
 
       // open dialog and set input value
-      const input = changeProjectDialog.dialog.querySelector(".project-title");
-      input.value = changeProjectDialog.previousName;
+      const input = changeProjectDialog.querySelector(".project-title");
+      input.value = previousProjectName;
       changeProjectDialog.showModal();
     });
     icons.appendChild(penIcon);

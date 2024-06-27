@@ -7,5 +7,103 @@
   </head>
   <body>
     <div id="content"></div>
+
+    <dialog class="dialog" id="create-project-dialog">
+      <form action="#" class="form-container">
+        <input
+          required
+          type="text"
+          class="project-title"
+          name="create-project-title"
+          maxlength="20"
+          placeholder="Project title"
+        />
+        <button type="submit" class="project-submit">Add project</button>
+      </form>
+    </dialog>
+
+    <dialog class="dialog" id="rename-project-dialog">
+      <form action="#" class="form-container">
+        <button type="submit" class="project-submit">Rename project</button>
+        <input
+          required
+          type="text"
+          class="project-title"
+          name="rename-project-title"
+          maxlength="20"
+          placeholder="Project title"
+        />
+      </form>
+    </dialog>
+
+    <dialog class="dialog" id="create-todo-dialog">
+      <form action="#" class="form-container">
+        <button type="submit" class="todo-submit">Add todo</button>
+        <input
+          required=""
+          type="text"
+          class="form-title"
+          name="Title"
+          placeholder="Title"
+        />
+        <input
+          type="text"
+          class="form-description"
+          name="Description"
+          placeholder="Description"
+        />
+        <div>
+          <label for="create-due-date">Due date:</label>
+          <input type="date" id="create-due-date" name="date" />
+        </div>
+        <div>
+          <label for="create-priority-select">priority: </label>
+          <select id="create-priority-select" name="priority">
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+          </select>
+        </div>
+        <div>
+          <label for="create-project-select">project: </label>
+          <select id="create-project-select" name="project"></select>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="dialog" id="change-todo-dialog">
+      <form action="#" class="form-container">
+        <button type="submit" class="todo-submit">Change todo</button>
+        <input
+          required=""
+          type="text"
+          class="form-title"
+          name="Title"
+          placeholder="Title"
+        />
+        <input
+          type="text"
+          class="form-description"
+          name="Description"
+          placeholder="Description"
+        />
+        <div>
+          <label for="change-due-date">Due date:</label>
+          <input type="date" id="change-due-date" name="date" />
+        </div>
+        <div>
+          <label for="change-priority-select">priority: </label>
+          <select id="change-priority-select" name="priority">
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+          </select>
+        </div>
+        <div>
+          <label for="change-project-select">project: </label>
+          <select id="change-project-select" name="project"></select>
+        </div>
+      </form>
+    </dialog>
   </body>
 </html>
